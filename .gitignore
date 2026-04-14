@@ -1,0 +1,20 @@
+# Build outputs
+build/
+app/build/
+.gradle/
+
+# Local config
+local.properties
+*.keystore
+*.jks
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# NDK / CMake generated
+.cxx/
+
+# Model files (large binaries — downloaded at runtime)
+*.gguf
