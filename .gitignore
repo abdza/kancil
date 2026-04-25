@@ -18,3 +18,4 @@ local.properties
 
 # Model files (large binaries — downloaded at runtime)
 *.gguf
+keystore.properties
