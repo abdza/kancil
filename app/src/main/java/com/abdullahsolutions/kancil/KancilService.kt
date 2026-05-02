@@ -6,6 +6,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -114,7 +116,15 @@ class KancilService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        startForeground(NOTIFICATION_ID, buildNotification("Starting…"))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(
+                NOTIFICATION_ID,
+                buildNotification("Starting…"),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, buildNotification("Starting…"))
+        }
         scope.launch { initModel() }
     }
 
@@ -149,7 +159,7 @@ class KancilService : Service() {
         val mmprojPath = ModelDownloader.mmprojFile(ctx).absolutePath
         val nThreads   = ((Runtime.getRuntime().availableProcessors() + 1) / 2).coerceIn(2, 6)
 
-        val ok = LlamaEngine.load(modelPath, mmprojPath, nCtx = 4096, nThreads = nThreads)
+        val ok = LlamaEngine.load(modelPath, mmprojPath, nCtx = 2048, nThreads = nThreads)
         if (ok) {
             ModelState.status.value = ModelState.Status.Ready
             updateNotification("Kancil AI ready")

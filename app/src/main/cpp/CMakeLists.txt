@@ -12,10 +12,11 @@ set(LLAMA_BUILD_TOOLS    OFF CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_COMMON   OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS    OFF CACHE BOOL "" FORCE)
 
-# ARM performance: enable NEON, dot-product and i8mm SIMD extensions
+# Use the baseline arm64 arch so llama.cpp's own runtime CPU feature detection
+# picks the right SIMD paths. Forcing armv8.4-a here generates dotprod/i8mm
+# instructions that cause SIGILL on Snapdragon 845/855 and similar chips.
 if(ANDROID_ABI STREQUAL "arm64-v8a")
-    set(GGML_CPU_ARM_ARCH "armv8.4-a" CACHE STRING "" FORCE)
-    add_compile_options(-march=armv8.4-a+dotprod+i8mm -O3 -DNDEBUG)
+    add_compile_options(-O3 -DNDEBUG)
 endif()
 
 add_subdirectory(${LLAMA_DIR} llama_build)

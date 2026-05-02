@@ -278,11 +278,19 @@ private fun MessageBubble(msg: ChatMessage, isStreaming: Boolean = false) {
                     .background(bgColor)
                     .padding(horizontal = 14.dp, vertical = 10.dp)
             ) {
-                Text(
-                    text  = msg.content + if (isStreaming) "▌" else "",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                if (msg.isUser) {
+                    Text(
+                        text  = msg.content + if (isStreaming) "▌" else "",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                } else {
+                    MarkdownText(
+                        text  = msg.content + if (isStreaming) "▌" else "",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         }
     }

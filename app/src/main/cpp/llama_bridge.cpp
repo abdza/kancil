@@ -228,6 +228,10 @@ Java_com_abdullahsolutions_kancil_LlamaEngine_generateWithImage(
         int len = llama_token_to_piece(vocab, new_token, buf, sizeof(buf) - 1, 0, true);
         if (len > 0) {
             std::string piece(buf, len);
+            // Belt-and-suspenders: also stop on the literal stop-token strings for
+            // models (e.g. Gemma) whose stop IDs aren't caught by llama_vocab_is_eog.
+            if (piece == "<end_of_turn>" || piece == "<eos>" ||
+                piece == "<|end|>"       || piece == "<|endoftext|>") break;
             result += piece;
             emit_token(piece);
         }

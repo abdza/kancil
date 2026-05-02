@@ -103,7 +103,7 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
                     maxTokens     = 512,
                     onToken       = { token -> _partialReply.update { it + token } }
                 )
-                val reply = _partialReply.value
+                val reply = _partialReply.value.stripLlmArtifacts()
                 _messages.update { it + ChatMessage(content = reply, isUser = false) }
             } catch (e: Exception) {
                 Log.e(TAG, "Generation error", e)
@@ -126,3 +126,14 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
         ctx.startForegroundService(Intent(ctx, KancilService::class.java))
     }
 }
+
+private fun String.stripLlmArtifacts(): String = this
+    .replace("<end_of_turn>", "")
+    .replace("<start_of_turn>model\n", "")
+    .replace("<start_of_turn>user\n", "")
+    .replace("<start_of_turn>", "")
+    .replace("<|end|>", "")
+    .replace("<|endoftext|>", "")
+    .replace("<bos>", "")
+    .replace("<eos>", "")
+    .trim()
